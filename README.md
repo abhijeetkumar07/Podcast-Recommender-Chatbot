@@ -20,4 +20,4 @@ python app.py
 Frontend: open `frontend/index.html` in your browser.
 
 ## Authors
-- Abhijeet, Nitin, Rahul
+- Abhijeet
