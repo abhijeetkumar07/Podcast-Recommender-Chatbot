@@ -1,0 +1,181 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Podcast Recommender Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<header class="bg-blue-500 text-white">
+  <div class="container mx-auto flex justify-between items-center py-4 px-6">
+    <div class="text-2xl font-bold">Podcast Recommender</div>
+    <nav>
+      <ul class="flex space-x-6">
+        <li>
+          <a class="hover:text-gray-300" href="#">Home</a>
+        </li>
+        <li>
+          <a class="hover:text-gray-300" href="#">About</a>
+        </li>
+        <li>
+          <a class="hover:text-gray-300" href="#">Features</a>
+        </li>
+        <li>
+          <a class="hover:text-gray-300" href="#">Contact</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+</header>
+
+<section class="bg-blue-500 text-white py-20">
+  <div class="container mx-auto text-center">
+    <h1 class="text-4xl font-bold mb-4">Discover Your Next Favorite Podcast</h1>
+    <div class="flex justify-center mb-4">
+      <input id="queryInput" class="w-2/3 p-2 rounded-l-full text-gray-800" placeholder="Search for podcasts..." type="text"/>
+      <button onclick="searchPodcasts()" class="bg-white text-blue-500 font-bold py-2 px-4 rounded-r-full hover:bg-gray-200">Search</button>
+    </div>
+    
+    <div id="results" class="bg-blue-500 text-gray-800 max-w-2xl mx-auto p-4 rounded shadow-md mt-6"></div>
+  </div>  
+</section>
+
+<script>
+  let isSearching = false;
+  let retryCount = 0;
+  const MAX_RETRIES = 3;
+
+  async function searchPodcasts() {
+    if (isSearching) return;
+    
+    const query = document.getElementById('queryInput').value;
+    const resultsDiv = document.getElementById('results');
+    const searchButton = document.querySelector('button');
+    
+    if (!query.trim()) {
+      resultsDiv.innerHTML = '<p class="text-red-500">Please enter a search term.</p>';
+      return;
+    }
+
+    try {
+      isSearching = true;
+      searchButton.disabled = true;
+      searchButton.innerHTML = 'Searching...';
+      resultsDiv.innerHTML = '<p class="text-gray-600">Searching for podcasts...</p>';
+
+      const response = await fetch('http://localhost:5000/recommend', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.length === 0) {
+        resultsDiv.innerHTML = '<p class="text-gray-600">No recommendations found. Try a different search term.</p>';
+        return;
+      }
+
+      resultsDiv.innerHTML = data.map(podcast => `
+        <div class="mb-6 p-4 border rounded-lg hover:shadow-lg transition-shadow bg-white">
+          <div class="flex gap-4">
+            ${podcast.image_url ? `
+              <img src="${podcast.image_url}" alt="${podcast.title}" class="w-32 h-32 object-cover rounded-lg">
+            ` : ''}
+            <div class="flex-1">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="text-xl font-bold text-blue-600">${podcast.title}</h3>
+                  <p class="text-gray-600 mt-2">${podcast.description}</p>
+                </div>
+              </div>
+              
+              <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-500"><span class="font-semibold">Publisher:</span> ${podcast.publisher}</p>
+                  <p class="text-gray-500"><span class="font-semibold">Episodes:</span> ${podcast.episodes}</p>
+                </div>
+                <div>
+                  <p class="text-gray-500"><span class="font-semibold">Topics:</span> ${podcast.topics.join(', ')}</p>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <a href="${podcast.external_url}" target="_blank" 
+                   class="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                  <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                  </svg>
+                  Listen on Spotify
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Reset retry count on successful search
+      retryCount = 0;
+    } catch (error) {
+      console.error('Search error:', error);
+      
+      if (error.message === 'Failed to fetch' && retryCount < MAX_RETRIES) {
+        retryCount++;
+        resultsDiv.innerHTML = `
+          <div class="text-yellow-500">
+            <p>Connection error. Retrying (${retryCount}/${MAX_RETRIES})...</p>
+            <p class="text-sm mt-2">Make sure the backend server is running at http://localhost:5000</p>
+          </div>`;
+        // Retry after a short delay
+        setTimeout(searchPodcasts, 1000);
+        return;
+      }
+      
+      resultsDiv.innerHTML = `
+        <div class="text-red-500">
+          <p>Error fetching recommendations: ${error.message}</p>
+          <p class="text-sm mt-2">Make sure the backend server is running at http://localhost:5000</p>
+          <p class="text-sm mt-2">If the problem persists, try:</p>
+          <ul class="list-disc ml-6 mt-2">
+            <li>Refreshing the page</li>
+            <li>Checking if the server is running</li>
+            <li>Accepting the SSL certificate warning</li>
+          </ul>
+        </div>`;
+    } finally {
+      isSearching = false;
+      searchButton.disabled = false;
+      searchButton.innerHTML = 'Search';
+    }
+  }
+
+  // Add event listener for Enter key
+  document.getElementById('queryInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      searchPodcasts();
+    }
+  });
+</script>
+
+</body>
+</html>
