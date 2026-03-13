@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PodcastAI | Discover Your Next Frequency</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            },
+            dark: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'fade-in': 'fadeIn 0.5s ease-out forwards',
+            'slide-up': 'slideUp 0.6s ease-out forwards',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155; 
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569; 
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .glass-input:focus {
+      border-color: #2dd4bf;
+      box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), 0 0 20px rgba(45, 212, 191, 0.15);
+      border-color: rgba(45, 212, 191, 0.3);
+    }
+
+    .podcast-image-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, transparent 100%);
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Background decorative elements -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand-600/20 blur-[120px] mix-blend-screen animate-blob"></div>
+    <div class="absolute top-[20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[120px] mix-blend-screen animate-blob animation-delay-2000"></div>
+    <div class="absolute bottom-[-20%] left-[20%] w-[60%] h-[60%] rounded-full bg-purple-600/15 blur-[120px] mix-blend-screen animate-blob animation-delay-4000"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="relative z-10 border-b border-white/5 bg-dark-900/50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <div class="flex items-center gap-2 cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-microphone-lines text-xl"></i>
+          </div>
+          <span class="text-2xl font-bold tracking-tight text-white">Podcast<span class="text-brand-400">AI</span></span>
+        </div>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="text-gray-300 hover:text-white hover:text-brand-400 transition-colors text-sm font-medium tracking-wide">Home</a>
+          <a href="#" onclick="setQuery('Trending Podcasts'); return false;" class="text-gray-300 hover:text-white hover:text-brand-400 transition-colors text-sm font-medium tracking-wide">Trending</a>
+          <a href="#" onclick="setQuery('Best Podcast Categories'); return false;" class="text-gray-300 hover:text-white hover:text-brand-400 transition-colors text-sm font-medium tracking-wide">Categories</a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 transition-colors flex items-center gap-2">
+            <i class="fa-brands fa-github text-lg"></i> Star on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12 md:py-20">
+    
+    <div class="w-full max-w-4xl mx-auto text-center space-y-8 animate-slide-up">
+      <!-- Hero Section -->
+      <div class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-sm font-medium mb-4">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+          </span>
+          AI-Powered Discovery
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-tight">
+          Find your next <br class="hidden md:block" />
+          <span class="text-gradient">favorite frequency</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light">
+          Tell us what you're interested in, and our AI will search across thousands of Spotify shows to find the perfect podcasts tailored to your taste.
+        </p>
+      </div>
+
+      <!-- Search Box -->
+      <div class="w-full max-w-2xl mx-auto pt-6">
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-gradient-to-r from-brand-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+          <div class="relative flex items-center w-full glass-card rounded-2xl p-2">
+            <div class="pl-4 pr-3 text-gray-400">
+              <i class="fa-solid fa-magnifying-glass text-xl"></i>
+            </div>
+            <input 
+              id="queryInput" 
+              class="flex-1 bg-transparent border-none outline-none text-white text-lg px-2 py-4 placeholder-gray-500 font-medium" 
+              placeholder="E.g., true crime stories, tech startup interviews..." 
+              type="text"
+              autocomplete="off"
+            />
+            <button 
+              id="searchBtn"
+              onclick="searchPodcasts()" 
+              class="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center gap-2"
+            >
+              <span>Discover</span>
+              <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Results Area -->
+      <div id="results" class="w-full max-w-4xl mx-auto mt-16 text-left grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+        <!-- Prompts / Empty State -->
+        <div class="md:col-span-2 text-center pt-8 opacity-60">
+          <i class="fa-solid fa-headphones-simple text-5xl mb-4 text-gray-600"></i>
+          <p class="text-gray-400">Waiting for your search query...</p>
+          <div class="flex flex-wrap justify-center gap-3 mt-6">
+            <span onclick="setQuery('Artificial Intelligence')" class="cursor-pointer px-4 py-2 rounded-full glass-input text-gray-300 text-sm hover:text-white hover:border-brand-500 transition-colors">Artificial Intelligence</span>
+            <span onclick="setQuery('Startup Founders')" class="cursor-pointer px-4 py-2 rounded-full glass-input text-gray-300 text-sm hover:text-white hover:border-brand-500 transition-colors">Startup Founders</span>
+            <span onclick="setQuery('Mental Health')" class="cursor-pointer px-4 py-2 rounded-full glass-input text-gray-300 text-sm hover:text-white hover:border-brand-500 transition-colors">Mental Health</span>
+            <span onclick="setQuery('Space Exploration')" class="cursor-pointer px-4 py-2 rounded-full glass-input text-gray-300 text-sm hover:text-white hover:border-brand-500 transition-colors">Space Exploration</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let isSearching = false;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+
+    function setQuery(text) {
+      document.getElementById('queryInput').value = text;
+      searchPodcasts();
+    }
+
+    async function searchPodcasts() {
+      if (isSearching) return;
+      
+      const query = document.getElementById('queryInput').value;
+      const resultsDiv = document.getElementById('results');
+      const searchButton = document.getElementById('searchBtn');
+      
+      if (!query.trim()) {
+        const inputContainer = document.querySelector('.relative.flex.items-center');
+        inputContainer.classList.add('animate-[pulse_0.5s_ease-in-out_2]');
+        setTimeout(() => inputContainer.classList.remove('animate-[pulse_0.5s_ease-in-out_2]'), 1000);
+        return;
+      }
+
+      try {
+        isSearching = true;
+        searchButton.disabled = true;
+        searchButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Searching</span>';
+        searchButton.classList.add('opacity-80', 'cursor-not-allowed');
+        
+        // Loading state
+        resultsDiv.innerHTML = `
+          <div class="md:col-span-2 text-center py-20 animate-fade-in">
+            <div class="inline-block relative w-20 h-20">
+              <div class="absolute top-0 left-0 w-full h-full border-4 border-brand-500/20 rounded-full"></div>
+              <div class="absolute top-0 left-0 w-full h-full border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p class="mt-6 text-xl text-brand-400 font-medium animate-pulse">Scouring the audioverse...</p>
+          </div>
+        `;
+
+        const response = await fetch('http://localhost:5000/recommend', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ query })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        }
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        if (data.length === 0) {
+          resultsDiv.innerHTML = `
+            <div class="md:col-span-2 text-center py-16 animate-fade-in glass-card rounded-2xl">
+              <i class="fa-solid fa-ghost text-5xl text-gray-500 mb-4"></i>
+              <h3 class="text-xl font-medium text-gray-300">No signals found</h3>
+              <p class="text-gray-500 mt-2">Try tuning your search with different keywords.</p>
+            </div>
+          `;
+          return;
+        }
+
+        resultsDiv.innerHTML = data.map((podcast, index) => `
+          <div class="glass-card rounded-2xl p-5 card-hover flex flex-col h-full animate-slide-up" style="animation-delay: ${index * 100}ms">
+            <div class="flex gap-4 mb-4">
+              ${podcast.image_url ? `
+                <div class="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-black/40">
+                  <img src="${podcast.image_url}" alt="${podcast.title}" class="w-full h-full object-cover">
+                </div>
+              ` : `
+                <div class="w-24 h-24 rounded-xl bg-dark-700 flex items-center justify-center shrink-0 shadow-lg">
+                  <i class="fa-solid fa-podcast text-3xl text-gray-500"></i>
+                </div>
+              `}
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-bold text-white truncate" title="${podcast.title}">${podcast.title}</h3>
+                <p class="text-sm text-brand-400 font-medium mt-1 truncate">${podcast.publisher}</p>
+                <div class="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                  <span class="flex items-center gap-1"><i class="fa-solid fa-layer-group"></i> ${podcast.episodes} eps</span>
+                  <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                  <span class="truncate">${podcast.topics.join(', ')}</span>
+                </div>
+              </div>
+            </div>
+            
+            <p class="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-6 flex-1">
+              ${podcast.description || 'No description available for this podcast.'}
+            </p>
+            
+            <div class="mt-auto pt-4 border-t border-white/5">
+              <a href="${podcast.external_url}" target="_blank" rel="noopener noreferrer" 
+                 class="group w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#1DB954]/10 text-[#1DB954] hover:bg-[#1DB954] hover:text-white rounded-xl transition-all duration-300 font-semibold text-sm">
+                <i class="fa-brands fa-spotify text-lg"></i>
+                <span>Listen on Spotify</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all"></i>
+              </a>
+            </div>
+          </div>
+        `).join('');
+        
+        retryCount = 0;
+      } catch (error) {
+        console.error('Search error:', error);
+        
+        if (error.message === 'Failed to fetch' && retryCount < MAX_RETRIES) {
+          retryCount++;
+          resultsDiv.innerHTML = `
+            <div class="md:col-span-2 text-center py-12 glass-card rounded-2xl border-yellow-500/30">
+              <i class="fa-solid fa-plug-circle-exclamation text-4xl text-yellow-500 mb-4 animate-pulse"></i>
+              <p class="text-lg text-yellow-500 font-medium">Reconnecting to server (${retryCount}/${MAX_RETRIES})...</p>
+              <p class="text-gray-400 mt-2">Checking connection at http://localhost:5000</p>
+            </div>`;
+          setTimeout(searchPodcasts, 1500);
+          return;
+        }
+        
+        resultsDiv.innerHTML = `
+          <div class="md:col-span-2 p-8 glass-card border-red-500/30 rounded-2xl flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4 text-red-500">
+              <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Connection Error</h3>
+            <p class="text-red-400 mb-4">${error.message}</p>
+            <div class="bg-dark-800/50 rounded-xl p-4 text-left w-full max-w-md border border-white/5">
+              <p class="text-sm text-gray-300 font-medium mb-2">Troubleshooting steps:</p>
+              <ul class="text-sm text-gray-400 space-y-2 list-disc pl-5">
+                <li>Ensure the backend server is running in your terminal <code class="bg-black/30 px-1 rounded text-gray-300">python app.py</code></li>
+                <li>Check if the server is available at <a href="http://localhost:5000" target="_blank" class="text-brand-400 hover:underline">http://localhost:5000</a></li>
+                <li>Verify your Spotify API credentials in the <code class="bg-black/30 px-1 rounded text-gray-300">.env</code> file</li>
+              </ul>
+            </div>
+          </div>`;
+      } finally {
+        isSearching = false;
+        searchButton.disabled = false;
+        searchButton.innerHTML = '<span>Discover</span> <i class="fa-solid fa-arrow-right text-sm"></i>';
+        searchButton.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+    }
+
+    // Add event listener for Enter key
+    document.getElementById('queryInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchPodcasts();
+      }
+    });
+  </script>
+</body>
+</html>
